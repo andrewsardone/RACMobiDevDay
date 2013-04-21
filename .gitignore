@@ -17,3 +17,11 @@ profile
 DerivedData
 *.swp
 *~.nib
+
+# Bundler
+.bundle
+vendor/bundle/ruby
+/bin
+
+# CocoaPods
+Pods
