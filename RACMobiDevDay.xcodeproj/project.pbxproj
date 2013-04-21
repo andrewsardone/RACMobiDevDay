@@ -19,6 +19,8 @@
 		4933181F1724855D009F0CF7 /* APIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 4933181E1724855D009F0CF7 /* APIClient.m */; };
 		49331821172485AE009F0CF7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49331820172485AE009F0CF7 /* SystemConfiguration.framework */; };
 		49331823172485D3009F0CF7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49331822172485D3009F0CF7 /* MobileCoreServices.framework */; };
+		4933182717248643009F0CF7 /* SignUpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4933182517248643009F0CF7 /* SignUpViewController.m */; };
+		4933182817248643009F0CF7 /* SignUpViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4933182617248643009F0CF7 /* SignUpViewController.xib */; };
 		9B777A79D6C74768A3304B37 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A41BA19C320541E5A662A912 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +42,9 @@
 		4933181E1724855D009F0CF7 /* APIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APIClient.m; sourceTree = "<group>"; };
 		49331820172485AE009F0CF7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		49331822172485D3009F0CF7 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		4933182417248643009F0CF7 /* SignUpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignUpViewController.h; sourceTree = "<group>"; };
+		4933182517248643009F0CF7 /* SignUpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignUpViewController.m; sourceTree = "<group>"; };
+		4933182617248643009F0CF7 /* SignUpViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SignUpViewController.xib; sourceTree = "<group>"; };
 		A41BA19C320541E5A662A912 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F30E7E404464446DB1C2A262 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -99,6 +104,9 @@
 				4933181E1724855D009F0CF7 /* APIClient.m */,
 				4933180F17248219009F0CF7 /* AppDelegate.h */,
 				4933181017248219009F0CF7 /* AppDelegate.m */,
+				4933182417248643009F0CF7 /* SignUpViewController.h */,
+				4933182517248643009F0CF7 /* SignUpViewController.m */,
+				4933182617248643009F0CF7 /* SignUpViewController.xib */,
 				4933180717248219009F0CF7 /* Supporting Files */,
 			);
 			path = RACMobiDevDay;
@@ -175,6 +183,7 @@
 				4933181317248219009F0CF7 /* Default.png in Resources */,
 				4933181517248219009F0CF7 /* Default@2x.png in Resources */,
 				4933181717248219009F0CF7 /* Default-568h@2x.png in Resources */,
+				4933182817248643009F0CF7 /* SignUpViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +228,7 @@
 				4933180D17248219009F0CF7 /* main.m in Sources */,
 				4933181117248219009F0CF7 /* AppDelegate.m in Sources */,
 				4933181F1724855D009F0CF7 /* APIClient.m in Sources */,
+				4933182717248643009F0CF7 /* SignUpViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
