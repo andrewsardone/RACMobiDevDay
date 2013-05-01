@@ -1,5 +1,6 @@
 #import "SignUpViewController.h"
 #import "APIClient.h"
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 @interface SignUpViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *firstNameField;
@@ -9,13 +10,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *createButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
-
-// possibly inferred state
-@property (strong, nonatomic) UIColor *enabledButtonColor;
-@property (strong, nonatomic) UIColor *disabledButtonColor;
-
-@property (strong, nonatomic) UIColor *defaultTextColor;
-@property (strong, nonatomic) UIColor *loadingTextColor;
 @end
 
 @implementation SignUpViewController
@@ -35,94 +29,82 @@
 {
     [super viewDidLoad];
 
-    // initial button setup
-    self.enabledButtonColor = self.createButton.titleLabel.textColor;
-    self.disabledButtonColor = UIColor.lightGrayColor;
-    [self.createButton setTitleColor:self.disabledButtonColor forState:UIControlStateNormal];
-    self.createButton.titleLabel.textColor = UIColor.lightGrayColor;
-    self.createButton.enabled = NO;
-    [self.createButton addTarget:self action:@selector(createButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
+    RACSignal *formValid = [RACSignal
+        combineLatest:@[
+            self.firstNameField.rac_textSignal,
+            self.lastNameField.rac_textSignal,
+            self.emailField.rac_textSignal,
+            self.confirmEmailField.rac_textSignal,
+        ]
+        reduce:^(NSString *firstName, NSString *lastName, NSString *email, NSString *confirmEmail) {
+            return @(firstName.length > 0
+                    && lastName.length > 0
+                    && email.length > 0
+                    && confirmEmail.length > 0
+                    && [email isEqualToString:confirmEmail]);
+        }];
 
-    // initial text field setup
-    self.defaultTextColor = self.firstNameField.textColor;
-    self.loadingTextColor = UIColor.lightGrayColor;
+    RACCommand *createAccountCommand = [RACCommand commandWithCanExecuteSignal:formValid];
+    RACSignal *networkResults = [[[createAccountCommand
+       addSignalBlock:^RACSignal *(id value) {
+           return [[APIClient.sharedClient createAccountForEmail:self.emailField.text
+                                                      firstName:self.firstNameField.text
+                                                       lastName:self.lastNameField.text]
+                   materialize];
+       }]
+       switchToLatest]
+       deliverOn:[RACScheduler mainThreadScheduler]];
 
-    // listen on text editing changes
-    [self.firstNameField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
-    [self.lastNameField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
-    [self.emailField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
-    [self.confirmEmailField addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
-}
+    // bind create button's UI state and touch action
+    [[self.createButton rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id sender) {
+        [createAccountCommand execute:sender];
+    }];
 
+    RACSignal *buttonEnabled = RACAbleWithStart(createAccountCommand, canExecute);
+    RAC(self.createButton.enabled) = buttonEnabled;
 
-#pragma mark UIControl events
+    UIColor *defaultButtonTitleColor = self.createButton.titleLabel.textColor;
+    RACSignal *buttonTextColor = [buttonEnabled map:^id(NSNumber *x) {
+        return x.boolValue ? defaultButtonTitleColor : [UIColor lightGrayColor];
+    }];
 
-- (void)textFieldChanged:(UITextField *)textField
-{
-    self.createButton.enabled = self.isFormValid;
-    [self.createButton setTitleColor:(self.createButton.isEnabled ? self.enabledButtonColor : self.disabledButtonColor)
-                            forState:UIControlStateNormal];
-}
+    [self.createButton rac_liftSelector:@selector(setTitleColor:forState:)
+                            withObjects:buttonTextColor, @(UIControlStateNormal)];
 
-- (void)createButtonTouched:(UIButton *)createButton
-{
-    [self updateUIForNetworkActivity:YES];
+    // bind button and text field state to create account command executing state
 
-    self.statusLabel.textColor = UIColor.lightGrayColor;
+    RACSignal *executing = RACAble(createAccountCommand, executing);
 
-    [APIClient.sharedClient createAccountForEmail:self.emailField.text
-                                        firstName:self.firstNameField.text
-                                         lastName:self.lastNameField.text
-                                          success:^(id account) {
-                                              self.statusLabel.textColor = [UIColor colorWithRed:0.033 green:0.640 blue:0.051 alpha:1.000];
-                                              self.statusLabel.text = NSLocalizedString(@"Thanks for signing up!", nil);
+    RACSignal *fieldTextColor = [executing map:^id(NSNumber *x) {
+        return x.boolValue ? [UIColor lightGrayColor] : [UIColor blackColor];
+    }];
 
-                                              [self updateUIForNetworkActivity:NO];
-                                          }
-                                          failure:^(NSError *error) {
-                                              self.statusLabel.textColor = [UIColor colorWithRed:0.727 green:0.000 blue:0.008 alpha:1.000];
-                                              self.statusLabel.text = error.localizedFailureReason;
+    RAC(self.firstNameField.textColor) = fieldTextColor;
+    RAC(self.lastNameField.textColor) = fieldTextColor;
+    RAC(self.emailField.textColor) = fieldTextColor;
+    RAC(self.confirmEmailField.textColor) = fieldTextColor;
 
-                                              [self updateUIForNetworkActivity:NO];
-                                          }];
-}
+    RACSignal *notExecuting = [executing not];
 
-#pragma mark Validation
+    RAC(self.firstNameField.enabled) = notExecuting;
+    RAC(self.lastNameField.enabled) = notExecuting;
+    RAC(self.emailField.enabled) = notExecuting;
+    RAC(self.confirmEmailField.enabled) = notExecuting;
 
-- (BOOL)isFormValid
-{
-    NSString *firstName = self.firstNameField.text;
-    NSString *lastName = self.lastNameField.text;
-    NSString *email = self.emailField.text;
-    NSString *confirmEmail = self.confirmEmailField.text;
+    [executing subscribeNext:^(NSNumber *x) {
+        x.boolValue ? [self.loadingIndicator startAnimating] : [self.loadingIndicator stopAnimating];
+        self.statusLabel.textColor = [UIColor lightGrayColor];
+    }];
 
-    return firstName.length > 0
-            && lastName.length > 0
-            && email.length > 0
-            && confirmEmail.length > 0
-            && [email isEqualToString:confirmEmail];
-}
-
-#pragma mark UI Updates
-
-- (void)updateUIForNetworkActivity:(BOOL)isNetworkActivity
-{
-    self.createButton.enabled = !isNetworkActivity;
-    [self.createButton setTitleColor:(isNetworkActivity ? self.disabledButtonColor : self.enabledButtonColor)
-                            forState:UIControlStateNormal];
-
-    self.firstNameField.enabled
-        = self.lastNameField.enabled
-        = self.emailField.enabled
-        = self.confirmEmailField.enabled = !isNetworkActivity;
-
-    self.firstNameField.textColor
-        = self.lastNameField.textColor
-        = self.emailField.textColor
-        = self.confirmEmailField.textColor
-        = (isNetworkActivity ? self.loadingTextColor : self.defaultTextColor);
-
-    isNetworkActivity ? [self.loadingIndicator startAnimating] : [self.loadingIndicator stopAnimating];
+    // Derive the status label's text and color from our network result
+    RAC(self.statusLabel.text) = [networkResults map:^id(RACEvent *x) {
+        return x.eventType == RACEventTypeError ? x.error.localizedFailureReason
+                                                : NSLocalizedString(@"Thanks for signing up!", nil);
+    }];
+    RAC(self.statusLabel.textColor) = [networkResults map:^id(RACEvent *x) {
+        return x.eventType == RACEventTypeError ? [UIColor redColor]
+                                                : [UIColor greenColor];
+    }];
 }
 
 @end

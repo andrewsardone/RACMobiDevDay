@@ -1,4 +1,5 @@
 #import "APIClient.h"
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 static NSString * const APIClientDefaultEndpoint = @"http://localhost:4567";
 
@@ -25,29 +26,32 @@ static NSString * const APIClientDefaultEndpoint = @"http://localhost:4567";
     return self;
 }
 
-- (void)createAccountForEmail:(NSString *)email
-                    firstName:(NSString *)firstName
-                     lastName:(NSString *)lastName
-                      success:(void (^)(id account))successBlock
-                      failure:(void (^)(NSError *error))failureBlock
+- (RACSignal *)createAccountForEmail:(NSString *)email
+                           firstName:(NSString *)firstName
+                            lastName:(NSString *)lastName
 {
+    RACSubject *subject = [RACSubject subject];
+
     [self postPath:@"/accounts"
         parameters:@{ @"first_name": firstName, @"last_name": lastName, @"email": email, }
            success:^(AFHTTPRequestOperation *operation, id responseObject) {
-               successBlock(responseObject);
+               [subject sendNext:responseObject];
+               [subject sendCompleted];
            }
            failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                id responseJSON = nil;
                if ([operation respondsToSelector:@selector(responseJSON)]) {
                    responseJSON = [(id)operation responseJSON];
                }
-               failureBlock([NSError errorWithDomain:@"com.example"
+               [subject sendError:[NSError errorWithDomain:@"com.example"
                                                 code:error.code
                                             userInfo:@{
                                                 NSLocalizedFailureReasonErrorKey: [responseJSON valueForKey:@"error"]
                                                                                   ?: @"Failed to create account"
-                                            }]);
+                                            }]];
            }];
+
+    return subject;
 }
 
 @end
