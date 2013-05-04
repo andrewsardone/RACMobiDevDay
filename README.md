@@ -1,3 +1,5 @@
+From [MobiDevDay 2013](http://mobidevdaydetroit.com/)
+
 ## Presentation
 
 You can find the slides [here on Speaker Deck](https://speakerdeck.com/andrewsardone/reactivecocoa-at-mobidevday-2013). A large portion of the talk involved narrating a walkthrough of the code, so I'm hoping to get a video up to compliment the slides.
