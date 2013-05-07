@@ -56,9 +56,7 @@
        deliverOn:[RACScheduler mainThreadScheduler]];
 
     // bind create button's UI state and touch action
-    [[self.createButton rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id sender) {
-        [createAccountCommand execute:sender];
-    }];
+    [[self.createButton rac_signalForControlEvents:UIControlEventTouchUpInside] executeCommand:createAccountCommand];
 
     RACSignal *buttonEnabled = RACAbleWithStart(createAccountCommand, canExecute);
     RAC(self.createButton.enabled) = buttonEnabled;
