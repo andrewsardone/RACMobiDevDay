@@ -21,3 +21,13 @@ script/server
 ```
 
 Now you can open `RACMobiDevDay.xcworkspace` in Xcode and start playing around!
+
+## Additional resources
+
+- https://github.com/ReactiveCocoa
+- https://pinboard.in/u:andrewsardone/t:ReactiveCocoa
+- https://github.com/andrewsardone/RACMobiDevDay
+- http://nsbrief.com/81-justin-spahr-summers/
+- http://j.mp/joshaberio
+- http://j.mp/reactiveextensions
+- https://github.com/mneorr/ObjectiveSugar
