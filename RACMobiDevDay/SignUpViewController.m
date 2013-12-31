@@ -14,17 +14,6 @@
 
 @implementation SignUpViewController
 
-- (id)init
-{
-    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nil];
-    return self;
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    return [self init];
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
