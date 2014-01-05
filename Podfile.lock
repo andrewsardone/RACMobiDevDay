@@ -1,32 +1,35 @@
 PODS:
-  - AFNetworking (1.2.1)
-  - JRSwizzle (1.0)
-  - libextobjc/EXTConcreteProtocol (0.2.5):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTKeyPathCoding (0.2.5):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/EXTScope (0.2.5):
-    - libextobjc/RuntimeExtensions
-  - libextobjc/RuntimeExtensions (0.2.5)
-  - ReactiveCocoa (1.5.0):
+  - AFNetworking (2.0.3):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+    - AFNetworking/UIKit
+  - AFNetworking/NSURLConnection (2.0.3):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.0.3):
+    - AFNetworking/NSURLConnection
+  - AFNetworking/Reachability (2.0.3)
+  - AFNetworking/Security (2.0.3)
+  - AFNetworking/Serialization (2.0.3)
+  - AFNetworking/UIKit (2.0.3):
+    - AFNetworking/NSURLConnection
+  - ReactiveCocoa (2.1.8):
     - ReactiveCocoa/Core
-    - ReactiveCocoa/RACExtensions
-  - ReactiveCocoa/Core (1.5.0):
-    - JRSwizzle (~> 1.0)
-    - libextobjc/EXTConcreteProtocol (~> 0.2.5)
-    - libextobjc/EXTKeyPathCoding (~> 0.2.5)
-    - libextobjc/EXTScope (~> 0.2.5)
-  - ReactiveCocoa/RACExtensions (1.5.0):
-    - ReactiveCocoa/Core
+    - ReactiveCocoa/no-arc
+  - ReactiveCocoa/Core (2.1.8):
+    - ReactiveCocoa/no-arc
+  - ReactiveCocoa/no-arc (2.1.8)
 
 DEPENDENCIES:
-  - AFNetworking (~> 1.2.0)
-  - ReactiveCocoa (~> 1.5.0)
+  - AFNetworking (~> 2.0.3)
+  - ReactiveCocoa (~> 2.1.8)
 
 SPEC CHECKSUMS:
-  AFNetworking: 616da0028916ce296f5c3cef74e5552eb4e10e13
-  JRSwizzle: 6242ff38485d870fc2636899048ee1ab883ae587
-  libextobjc: 2cbc74caf8bdc74a86fdf24673f773c83424ea98
-  ReactiveCocoa: 67e6f96f1aee091ead8306be7ba8da53d2d3671c
+  AFNetworking: e499052cbf3d743e9bb727bb37adb9dc2547ba15
+  ReactiveCocoa: 0db710a0afa1c627a64470e5c912a3870d4854ae
 
-COCOAPODS: 0.18.1
+COCOAPODS: 0.29.0

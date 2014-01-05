@@ -2,7 +2,7 @@
 
 @class RACSignal;
 
-@interface APIClient : AFHTTPClient
+@interface APIClient : NSObject
 
 + (instancetype)sharedClient;
 
