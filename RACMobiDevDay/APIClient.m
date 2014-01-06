@@ -5,7 +5,6 @@ static NSString * const APIClientDefaultEndpoint = @"http://localhost:4567";
 
 @implementation APIClient {
 	AFHTTPRequestOperationManager *requestManager;
-	NSURL *baseURL;
 }
 
 + (instancetype)sharedClient
@@ -33,16 +32,21 @@ static NSString * const APIClientDefaultEndpoint = @"http://localhost:4567";
                             lastName:(NSString *)lastName
 {
 	return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		[requestManager POST:@"/accounts"
+		AFHTTPRequestOperation *operation = [requestManager
+						POST:@"/accounts"
 				  parameters:@{ @"first_name": firstName, @"last_name": lastName, @"email": email, }
 					 success:^(AFHTTPRequestOperation *operation, id responseObject) {
 						 [subscriber sendNext:responseObject];
 						 [subscriber sendCompleted];
 					 }
 					 failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-						 [subscriber sendError:error];
+						 [subscriber sendError:[NSError errorWithDomain:@"com.example"
+																   code:error.code
+															   userInfo:@{NSLocalizedFailureReasonErrorKey : error.localizedFailureReason ?: @"Failed to create account" }]];
 					 }];
-		return nil;
+		return [RACDisposable disposableWithBlock:^{
+			[operation cancel];
+		}];
 	}];
 }
 

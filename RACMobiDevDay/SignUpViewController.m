@@ -74,7 +74,6 @@
 
     [executing subscribeNext:^(NSNumber *x) {
         x.boolValue ? [self.loadingIndicator startAnimating] : [self.loadingIndicator stopAnimating];
-        self.statusLabel.textColor = [UIColor lightGrayColor];
     }];
 
     // Derive the status label's text and color from our network result
@@ -82,10 +81,17 @@
         return x.eventType == RACEventTypeError ? x.error.localizedFailureReason
                                                 : NSLocalizedString(@"Thanks for signing up!", nil);
     }];
-    RAC(self.statusLabel, textColor) = [networkResults map:^id(RACEvent *x) {
-        return x.eventType == RACEventTypeError ? [UIColor redColor]
-                                                : [UIColor greenColor];
-    }];
+	
+	// networkResults needs to be durable as this signal is connected only when
+	// the execution is finished and results have already been delivered at that time
+	RACSignal *statusResultColor = [[networkResults replayLast] map:^id(RACEvent *x) {
+		return x.eventType == RACEventTypeError ? UIColor.redColor : UIColor.greenColor;
+	}];
+	
+    RAC(self.statusLabel, textColor) = [RACSignal
+										if:executing
+										then:[RACSignal return:UIColor.lightGrayColor]
+										else:statusResultColor];
 }
 
 @end
