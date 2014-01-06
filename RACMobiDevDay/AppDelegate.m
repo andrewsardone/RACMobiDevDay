@@ -6,9 +6,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	// Enable the network indicator management
-	[[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
-	
+    // Enable the network indicator management
+    [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
+
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = [SignUpViewController new];
     [self.window makeKeyAndVisible];
