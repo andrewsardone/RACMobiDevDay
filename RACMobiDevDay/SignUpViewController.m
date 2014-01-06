@@ -34,14 +34,14 @@
                     && [email isEqualToString:confirmEmail]);
         }];
 
-	RACCommand *createAccountCommand = [[RACCommand alloc] initWithEnabled:formValid signalBlock:^RACSignal *(id input) {
-		return [[APIClient.sharedClient createAccountForEmail:self.emailField.text
-													firstName:self.firstNameField.text
-													 lastName:self.lastNameField.text]
-				materialize];
-	}];
-	RACSignal *networkResults = [[createAccountCommand.executionSignals flatten] deliverOn:[RACScheduler mainThreadScheduler]];
-	
+    RACCommand *createAccountCommand = [[RACCommand alloc] initWithEnabled:formValid signalBlock:^RACSignal *(id input) {
+        return [[APIClient.sharedClient createAccountForEmail:self.emailField.text
+                                                    firstName:self.firstNameField.text
+                                                     lastName:self.lastNameField.text]
+                materialize];
+    }];
+    RACSignal *networkResults = [[createAccountCommand.executionSignals flatten] deliverOn:[RACScheduler mainThreadScheduler]];
+
     // bind create button's UI state and touch action
     self.createButton.rac_command = createAccountCommand;
 
@@ -81,17 +81,17 @@
         return x.eventType == RACEventTypeError ? x.error.localizedFailureReason
                                                 : NSLocalizedString(@"Thanks for signing up!", nil);
     }];
-	
-	// networkResults needs to be durable as this signal is connected only when
-	// the execution is finished and results have already been delivered at that time
-	RACSignal *statusResultColor = [[networkResults replayLast] map:^id(RACEvent *x) {
-		return x.eventType == RACEventTypeError ? UIColor.redColor : UIColor.greenColor;
-	}];
-	
+
+    // networkResults needs to be durable as this signal is connected only when
+    // the execution is finished and results have already been delivered at that time
+    RACSignal *statusResultColor = [[networkResults replayLast] map:^id(RACEvent *x) {
+        return x.eventType == RACEventTypeError ? UIColor.redColor : UIColor.greenColor;
+    }];
+
     RAC(self.statusLabel, textColor) = [RACSignal
-										if:executing
-										then:[RACSignal return:UIColor.lightGrayColor]
-										else:statusResultColor];
+        if:executing
+        then:[RACSignal return:UIColor.lightGrayColor]
+        else:statusResultColor];
 }
 
 @end
