@@ -1,4 +1,4 @@
-platform :ios, '5.0'
+platform :ios, '7.0'
 
-pod 'AFNetworking', '~> 1.2.0'
-pod 'ReactiveCocoa', '~> 1.5.0'
+pod 'AFNetworking', '~> 2.0.3'
+pod 'ReactiveCocoa', '~> 2.1.8'
